@@ -1,0 +1,104 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="JavaHTTP" basedir="." default="do_all">
+
+    <!-- Установка глобальных свойств для этого проекта -->
+    <property name="source.dir" value="${basedir}/src"/>
+    <property name="build.dir" value="${basedir}/build"/>
+    <property name="dist.dir" value="${basedir}/dist"/>
+    <property name="client.main.class" value="brs.http.TcpClient"/>
+    <property name="server.main.class" value="brs.http.TcpServer"/>
+    <property name="client.app.name" value="client"/>
+    <property name="server.app.name" value="server"/>
+
+    <condition property="isWindows">
+        <os family="windows" />
+    </condition>
+
+    <condition property="isUnix">
+        <os family="unix" />
+    </condition>
+
+    <!-- Очистка выходных каталогов -->
+    <target name="init">
+        <delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}"/>
+    </target>
+
+    <!-- Компиляция классов приложения -->
+    <target name="compile" depends="init" description="Компилируем основные классы в выходной каталог">
+        <mkdir dir="${build.dir}"/>
+        <javac destdir="${build.dir}" encoding="UTF-8">
+            <src path="${source.dir}"/>
+        </javac>
+    </target>
+
+    <!-- Создание архива JAR -->
+    <target name="build_app" depends="compile" description="Create archive">
+        <mkdir dir="${dist.dir}"/>
+        <jar destfile="${dist.dir}/${client.app.name}.jar" basedir="${build.dir}">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Main-class" value="${client.main.class}"/>
+            </manifest>
+        </jar>
+        <jar destfile="${dist.dir}/${server.app.name}.jar" basedir="${build.dir}">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Main-class" value="${server.main.class}"/>
+            </manifest>
+        </jar>
+
+    </target>
+
+    <!-- Запуск сервера -->    
+    <target name="run_server_Windows" if="isWindows" depends="build_app">
+        <java fork="yes" classname="${server.main.class}">
+            <classpath>
+                <pathelement location="${dist.dir}/${server.app.name}.jar"/>
+            </classpath>
+            <jvmarg value="-DconsoleEncoding=Cp866"/>
+        </java>
+    </target>
+
+    <target name="run_server_Unix" if="isUnix" depends="build_app">
+        <java fork="yes" classname="${server.main.class}">
+            <classpath>
+                <pathelement location="${dist.dir}/${server.app.name}.jar"/>
+            </classpath>
+            <jvmarg value="-DconsoleEncoding=UTF-8"/>
+        </java>
+    </target>
+        
+    <target name="run_server" depends="run_server_Windows, run_server_Unix">
+    </target>
+    
+    <!-- Запуск клиента -->   
+    <target name="run_client_Windows" if="isWindows" depends="build_app">
+        <java fork="yes" classname="${client.main.class}">
+            <classpath>
+                <pathelement location="${dist.dir}/${client.app.name}.jar"/>
+            </classpath>
+            <jvmarg value="-DconsoleEncoding=Cp866"/>
+        </java>
+    </target>
+    
+    <target name="run_client_Unix" if="isUnix" depends="build_app">
+        <java fork="yes" classname="${client.main.class}">
+            <classpath>
+                <pathelement location="${dist.dir}/${client.app.name}.jar"/>
+            </classpath>
+            <jvmarg value="-DconsoleEncoding=UTF-8"/>
+        </java>
+    </target>
+    
+    <target name="run_client" depends="run_client_Windows, run_client_Unix">
+    </target>
+
+    
+    <target name="do_all" depends="build_app" description="Do All">
+        <echo message="ant run_client" />
+        <echo message="ant run_server" />
+    </target>
+    
+</project>
