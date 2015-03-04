@@ -11,8 +11,8 @@
     <property name="client.app.name" value="client"/>
     <property name="server.app.name" value="server"/>
 
-    <property name="host" value=""/>
-    <property name="port" value=""/>
+    <property name="host" value="localhost"/>
+    <property name="port" value="9999"/>
 
     <condition property="isWindows">
         <os family="windows" />
