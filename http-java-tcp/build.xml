@@ -29,7 +29,7 @@
     </target>
 
     <!-- Компиляция классов приложения -->
-    <target name="compile" depends="init" description="Компилируем основные классы в выходной каталог">
+    <target name="compile" depends="init" description="Compiles core application classes to the output dir">
         <mkdir dir="${build.dir}"/>
         <javac destdir="${build.dir}" encoding="UTF-8">
             <src path="${source.dir}"/>
