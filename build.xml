@@ -11,6 +11,9 @@
     <property name="client.app.name" value="client"/>
     <property name="server.app.name" value="server"/>
 
+    <property name="host" value=""/>
+    <property name="port" value=""/>
+
     <condition property="isWindows">
         <os family="windows" />
     </condition>
@@ -52,21 +55,23 @@
     </target>
 
     <!-- Запуск сервера -->    
-    <target name="run_server_Windows" if="isWindows" depends="build_app">
+    <target name="run_server_Windows" if="isWindows">
         <java fork="yes" classname="${server.main.class}">
             <classpath>
                 <pathelement location="${dist.dir}/${server.app.name}.jar"/>
             </classpath>
             <jvmarg value="-DconsoleEncoding=Cp866"/>
+            <arg value="${port}"/>
         </java>
     </target>
 
-    <target name="run_server_Unix" if="isUnix" depends="build_app">
+    <target name="run_server_Unix" if="isUnix">
         <java fork="yes" classname="${server.main.class}">
             <classpath>
                 <pathelement location="${dist.dir}/${server.app.name}.jar"/>
             </classpath>
             <jvmarg value="-DconsoleEncoding=UTF-8"/>
+            <arg value="${port}"/>
         </java>
     </target>
         
@@ -74,21 +79,25 @@
     </target>
     
     <!-- Запуск клиента -->   
-    <target name="run_client_Windows" if="isWindows" depends="build_app">
+    <target name="run_client_Windows" if="isWindows">
         <java fork="yes" classname="${client.main.class}">
             <classpath>
                 <pathelement location="${dist.dir}/${client.app.name}.jar"/>
             </classpath>
             <jvmarg value="-DconsoleEncoding=Cp866"/>
+            <arg value="${host}"/>
+            <arg value="${port}"/>
         </java>
     </target>
     
-    <target name="run_client_Unix" if="isUnix" depends="build_app">
+    <target name="run_client_Unix" if="isUnix">
         <java fork="yes" classname="${client.main.class}">
             <classpath>
                 <pathelement location="${dist.dir}/${client.app.name}.jar"/>
             </classpath>
             <jvmarg value="-DconsoleEncoding=UTF-8"/>
+            <arg value="${host}"/>
+            <arg value="${port}"/>
         </java>
     </target>
     
@@ -97,8 +106,10 @@
 
     
     <target name="do_all" depends="build_app" description="Do All">
-        <echo message="ant run_client" />
-        <echo message="ant run_server" />
+        <echo message="for run client:" />
+        <echo message="ant run_client [-Dhost=host] [-Dport=port]" />
+        <echo message="for run server:" />
+        <echo message="ant run_server [-Dport=port]" />
     </target>
     
 </project>
