@@ -10,16 +10,6 @@
     <property name="main.class" value="brs.http.HttpServer"/>
     <property name="app.name" value="webserver"/>
     
-    <property name="fileHeader" value="Header.txt"/>
-
-    <condition property="isWindows">
-        <os family="windows" />
-    </condition>
-
-    <condition property="isUnix">
-        <os family="unix" />
-    </condition>
-
     <!-- Очистка выходных каталогов -->
     <target name="init">
         <delete dir="${build.dir}"/>
@@ -54,34 +44,7 @@
         </jar>
     </target>
 
-    <!-- Запуск клиента -->   
-    <target name="run_Windows" if="isWindows">
-        <java fork="yes" classname="${main.class}">
-            <classpath>
-                <pathelement location="${dist.dir}/${app.name}.jar"/>
-            </classpath>
-            <jvmarg value="-DconsoleEncoding=Cp866"/>
-            <arg value="${fileHeader}"/>
-        </java>
-    </target>
-    
-    <target name="run_Unix" if="isUnix">
-        <java fork="yes" classname="${main.class}">
-            <classpath>
-                <pathelement location="${dist.dir}/${app.name}.jar"/>
-            </classpath>
-            <jvmarg value="-DconsoleEncoding=UTF-8"/>
-            <arg value="${fileHeader}"/>
-        </java>
-    </target>
-    
-    <target name="run" depends="run_Windows, run_Unix">
-    </target>
-
-    
-    <target name="do_all" depends="build_app, run" description="Do All">
-        <echo message="for run client:" />
-        <echo message="ant run [-DfileHeader=file]" />
+    <target name="do_all" depends="build_app" description="Do All">
     </target>
     
 </project>
