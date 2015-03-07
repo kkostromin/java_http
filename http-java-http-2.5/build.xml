@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="JavaHTTP" basedir="." default="do_all">
+
+    <!-- Установка глобальных свойств для этого проекта -->
+    <property name="source.dir" value="${basedir}/src"/>
+    <property name="www.dir" value="${basedir}/www/"/>
+    <property name="build.dir" value="${basedir}/build"/>
+    <property name="dist.dir" value="${basedir}/dist"/>
+    <property name="main.class" value="brs.http.HttpServer"/>
+    <property name="app.name" value="webserver"/>
+    
+    <property name="fileHeader" value="Header.txt"/>
+
+    <condition property="isWindows">
+        <os family="windows" />
+    </condition>
+
+    <condition property="isUnix">
+        <os family="unix" />
+    </condition>
+
+    <!-- Очистка выходных каталогов -->
+    <target name="init">
+        <delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}"/>
+    </target>
+
+    <!-- Компиляция классов приложения -->
+    <target name="compile" depends="init" description="Compiles core application classes to the output dir">
+        <mkdir dir="${build.dir}"/>
+        <javac destdir="${build.dir}" encoding="UTF-8">
+            <src path="${source.dir}"/>
+        </javac>
+    </target>
+
+
+	<target name="copy" depends="compile">
+		<mkdir dir="${build.dir}/www" />
+		<copy todir="${build.dir}/www">
+			<fileset dir="${www.dir}">
+			</fileset>
+		</copy>
+	</target>
+
+    <!-- Создание архива JAR -->
+    <target name="build_app" depends="copy" description="Create archive">
+        <mkdir dir="${dist.dir}"/>
+        <jar destfile="${dist.dir}/${app.name}.jar" basedir="${build.dir}">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Main-class" value="${main.class}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <!-- Запуск клиента -->   
+    <target name="run_Windows" if="isWindows">
+        <java fork="yes" classname="${main.class}">
+            <classpath>
+                <pathelement location="${dist.dir}/${app.name}.jar"/>
+            </classpath>
+            <jvmarg value="-DconsoleEncoding=Cp866"/>
+            <arg value="${fileHeader}"/>
+        </java>
+    </target>
+    
+    <target name="run_Unix" if="isUnix">
+        <java fork="yes" classname="${main.class}">
+            <classpath>
+                <pathelement location="${dist.dir}/${app.name}.jar"/>
+            </classpath>
+            <jvmarg value="-DconsoleEncoding=UTF-8"/>
+            <arg value="${fileHeader}"/>
+        </java>
+    </target>
+    
+    <target name="run" depends="run_Windows, run_Unix">
+    </target>
+
+    
+    <target name="do_all" depends="build_app, run" description="Do All">
+        <echo message="for run client:" />
+        <echo message="ant run [-DfileHeader=file]" />
+    </target>
+    
+</project>

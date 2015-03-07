@@ -1,0 +1,10 @@
+Проект содержит код для статьи "Http в java. Часть 2.5 - Простой web server"
+http://programming086.blogspot.com/2012/03/http-java-25-web-server.html
+
+Запуск Ant с выводом результатов в журнальный файл:
+
+ant do_all -file build.xml -logfile ant.log
+
+Или с выводом в консольное окно просто
+
+ant
